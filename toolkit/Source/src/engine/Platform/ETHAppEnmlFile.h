@@ -52,6 +52,8 @@ public:
 
 	const ETHSpriteDensityManager& GetDensityManager() const;
 	const std::vector<gs2d::str_type::string>& GetDefinedWords() const;
+    
+    unsigned int GetMaxFramesPerSecond() const;
 
 private:
 	void LoadProperties(const gs2d::str_type::string& platformName, const gs2d::enml::File& file);
@@ -70,6 +72,7 @@ private:
 	gs2d::str_type::string fixedWidth, fixedHeight;
 
 	std::vector<gs2d::str_type::string> definedWords;
+    unsigned int maxFramesPerSecond;
 };
 
 #endif

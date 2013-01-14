@@ -45,7 +45,8 @@ ETHAppEnmlFile::ETHAppEnmlFile(
 	title(GS_L("Ethanon Engine")),
 	richLighting(true),
 	minScreenHeightForHdVersion(720),
-	minScreenHeightForFullHdVersion(1080)
+	minScreenHeightForFullHdVersion(1080),
+    maxFramesPerSecond(0)
 {
 	str_type::string out;
 	fileManager->GetAnsiFileString(fileName, out);
@@ -123,6 +124,8 @@ void ETHAppEnmlFile::LoadProperties(const str_type::string& platformName, const 
 	file.GetFloat(platformName, GS_L("fullHdDensityValue"), &fullHdDensityValue);
 	file.GetUInt(platformName, GS_L("minScreenHeightForHdVersion"), &minScreenHeightForHdVersion);
 	file.GetUInt(platformName, GS_L("minScreenHeightForFullHdVersion"), &minScreenHeightForFullHdVersion);
+    
+    file.GetUInt(platformName, GS_L("maxFramesPerSecond"), &maxFramesPerSecond);
 
 	const str_type::string newTitle = file.Get(platformName, GS_L("title"));
 	if (!newTitle.empty())
@@ -204,4 +207,9 @@ str_type::string ETHAppEnmlFile::GetFixedWidth() const
 str_type::string ETHAppEnmlFile::GetFixedHeight() const
 {
 	return fixedHeight;
+}
+
+unsigned int ETHAppEnmlFile::GetMaxFramesPerSecond() const
+{
+    return maxFramesPerSecond;
 }

@@ -38,7 +38,7 @@
 #endif
 
 #ifndef _DEBUG
- #ifdef __WIN32__
+ #ifdef _WIN32
   #include <windows.h>
   #define _CRTDBG_MAP_ALLOC
   #include <stdlib.h>
@@ -142,6 +142,35 @@ std::string FindStartupProject(const int argc, char **argv, const Platform::File
 	return ("");
 }
 
+void ShouldSleep(unsigned int fps, unsigned int maxFps, EDITOR currentEditor)
+{
+    if ((maxFps > 0) && (currentEditor != PARTICLE))
+    {
+        static unsigned msToSleep = 30;
+
+        if (fps > maxFps)
+        {
+            msToSleep++;
+        }
+        else
+        {
+            if (msToSleep > 0)
+            {
+                msToSleep--;
+            }
+        }
+        
+        if (msToSleep > 0)
+        {
+			#if defined(MACOSX) || defined(LINUX)
+	            usleep(msToSleep * 1000);
+			#else if defined(__WIN32__)
+				Sleep(static_cast<DWORD>(msToSleep));
+			#endif
+        }
+    }
+}
+
 #ifdef GS2D_USE_SDL
  int SDL_main(int argc, char **argv)
 #else
@@ -161,6 +190,8 @@ std::string FindStartupProject(const int argc, char **argv, const Platform::File
 
 	const ETHAppEnmlFile app(fileIOHub->GetProgramDirectory() + GS_L("editor.enml"), fileManager, gs2d::Application::GetPlatformName());
 	Vector2i v2Backbuffer(app.GetWidth(), app.GetHeight());
+    
+    printf("FPS limited to %u\n", app.GetMaxFramesPerSecond());
 
 	if ((video = CreateVideo(v2Backbuffer.x, v2Backbuffer.y, app.GetTitle(), app.IsWindowed(), app.IsVsyncEnabled(),
 							 fileIOHub, Texture::PF_UNKNOWN, true)))
@@ -355,6 +386,9 @@ std::string FindStartupProject(const int argc, char **argv, const Platform::File
 
 			// generate lightmaps if needed. It must be outside the drawing process
 			editor[SCENE]->UpdateInternalData();
+            
+            // Give the CPU a chance to sleep in case the maxFramesPerSecond value is set in the enml file
+            ShouldSleep((unsigned int)video->GetFPSRate(), app.GetMaxFramesPerSecond(), (EDITOR)current);
 		}
 	}
 	#if defined(_DEBUG) && defined(__WIN32__)
