@@ -64,8 +64,8 @@ class AndroidInput : public MobileInput, public Platform::NativeCommandForwarder
 	void UpdateKey(const std::string& keyName, const GS_KEY key);
 
 	void UpdateJoysticks();
-	std::string AssembleJoystickSharedDataPath(const std::size_t j, const std::string& parameter);
-	std::string AssembleJoystickAxisValueSharedDataPath(const std::size_t j, const std::string& axis);
+	std::string AssembleJoystickSharedDataPath(const std::size_t j, const std::string& parameter) const;
+	std::string AssembleJoystickAxisValueSharedDataPath(const std::size_t j, const std::string& axis) const;
 
 public:
 	AndroidInput(const unsigned int maxTouchCount, const std::string *input);

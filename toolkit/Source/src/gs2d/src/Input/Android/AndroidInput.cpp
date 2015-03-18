@@ -290,21 +290,21 @@ math::Vector3 AndroidInput::GetAccelerometerData() const
 
 void AndroidInput::UpdateJoysticks()
 {
-	const std::size_t oldNumJoysticks = m_numJoysticks;
+	const std::size_t oldMaxJoysticks = m_maxJoysticks;
 	m_numJoysticks = static_cast<std::size_t>(ReadJoystickValue("ethanon.system.numJoysticks"));
 	m_maxJoysticks = static_cast<std::size_t>(ReadJoystickValue("ethanon.system.maxJoysticks"));
 
 	// update internal joystick data
-	if (oldNumJoysticks != m_numJoysticks)
+	if (oldMaxJoysticks != m_maxJoysticks)
 	{
-		m_joyButtonsPressedList.resize(m_numJoysticks);
-		m_joyNumButtons.resize(m_numJoysticks, 0);
-		m_joyKeyStates.resize(m_numJoysticks);
-		m_joystickDpadStates.resize(m_numJoysticks);
-		m_xy.resize(m_numJoysticks);
-		m_z.resize(m_numJoysticks);
-		m_rudder.resize(m_numJoysticks);
-		for (std::size_t j = 0; j < m_numJoysticks; j++)
+		m_joyButtonsPressedList.resize(m_maxJoysticks);
+		m_joyNumButtons.resize(m_maxJoysticks, 0);
+		m_joyKeyStates.resize(m_maxJoysticks);
+		m_joystickDpadStates.resize(m_maxJoysticks);
+		m_xy.resize(m_maxJoysticks);
+		m_z.resize(m_maxJoysticks);
+		m_rudder.resize(m_maxJoysticks);
+		for (std::size_t j = 0; j < m_maxJoysticks; j++)
 		{
 			m_joystickDpadStates[j].resize(4);
 			m_z[j] = m_rudder[j] = 0.0f;
@@ -312,8 +312,11 @@ void AndroidInput::UpdateJoysticks()
 	}
 
 	// update joystick buttons
-	for (std::size_t j = 0; j < m_numJoysticks; j++)
+	for (std::size_t j = 0; j < m_maxJoysticks; j++)
 	{
+		if (GetJoystickStatus(j) != GSJS_DETECTED)
+			continue;
+
 		m_joyNumButtons[j]         = ReadJoystickValue(AssembleJoystickSharedDataPath(j, "numButtons"));
 		m_joyButtonsPressedList[j] = gs2d::Application::SharedData.Get(AssembleJoystickSharedDataPath(j, "buttonPressedList"));
 
@@ -343,14 +346,14 @@ void AndroidInput::UpdateJoysticks()
 	}
 }
 
-std::string AndroidInput::AssembleJoystickSharedDataPath(const std::size_t j, const std::string& parameter)
+std::string AndroidInput::AssembleJoystickSharedDataPath(const std::size_t j, const std::string& parameter) const
 {
 	std::stringstream ss;
 	ss << "ethanon.system.joystick" << j << "." << parameter;
 	return ss.str();
 }
 
-std::string AndroidInput::AssembleJoystickAxisValueSharedDataPath(const std::size_t j, const std::string& axis)
+std::string AndroidInput::AssembleJoystickAxisValueSharedDataPath(const std::size_t j, const std::string& axis) const
 {
 	std::stringstream ss;
 	ss << "ethanon.system.joystick" << j << "." << "axis" << axis;
@@ -359,7 +362,7 @@ std::string AndroidInput::AssembleJoystickAxisValueSharedDataPath(const std::siz
 
 GS_JOYSTICK_STATUS AndroidInput::GetJoystickStatus(const unsigned int id) const
 {
-	if (id < m_numJoysticks)
+	if (gs2d::Application::SharedData.Get(AssembleJoystickSharedDataPath(id, "status")) == "detected")
 	{
 		return GSJS_DETECTED;
 	}
