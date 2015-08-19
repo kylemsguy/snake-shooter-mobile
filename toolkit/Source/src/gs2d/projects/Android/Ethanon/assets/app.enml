@@ -1,12 +1,13 @@
 default
 {
-	title = Ethanon Sample Project;
+	title = Shooty Snake;
 	richLighting = true;
-	width = 1024; height = 768;
 }
 
 windows
 {
+	width = 854;
+	height = 480;
 	windowed = true;
 	vsync = true;
 }
