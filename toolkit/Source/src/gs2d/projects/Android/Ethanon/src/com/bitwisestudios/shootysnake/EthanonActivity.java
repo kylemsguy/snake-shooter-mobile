@@ -20,7 +20,7 @@
 	OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------------*/
 
-package net.asantee.ethanon;
+package com.bitwisestudios.shootysnake;
 
 import net.asantee.gs2d.GS2DActivity;
 import android.content.pm.ActivityInfo;

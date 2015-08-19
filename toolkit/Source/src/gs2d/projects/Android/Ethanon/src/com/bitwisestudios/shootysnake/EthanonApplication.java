@@ -1,4 +1,4 @@
-package net.asantee.ethanon;
+package com.bitwisestudios.shootysnake;
 
 import android.app.Application;
 
